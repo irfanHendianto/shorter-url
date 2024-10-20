@@ -40,6 +40,8 @@ func main() {
 	// Initialize the use case by passing in the repository
 	urlShortenerUseCase := usecase.NewShortenURL(urlRepo)
 
+	usecase.InitializeShortener()
+
 	// Initialize the HTTP handler by passing in the use case
 	urlHandler := deliveryHttp.NewURLHandler(urlShortenerUseCase)
 

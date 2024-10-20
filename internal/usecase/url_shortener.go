@@ -6,8 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"os"
 	"shorter-url/internal/entity"
 	"shorter-url/internal/repository"
+	"strconv"
 )
 
 var (
@@ -17,6 +19,24 @@ var (
 
 type ShortenURL struct {
 	repo repository.URLRepository
+}
+
+func InitializeShortener() {
+	// Parse SHORT_URL_OPTIONS as a string
+	ShortURLOptions = os.Getenv("SHORT_URL_OPTIONS")
+
+	// Parse SHORT_URL_LENGTH as an integer
+	lengthStr := os.Getenv("SHORT_URL_LENGTH")
+	if lengthStr != "" {
+		var err error
+		ShortURLLength, err = strconv.Atoi(lengthStr)
+		if err != nil {
+			fmt.Printf("Invalid SHORT_URL_LENGTH: %v\n", err)
+			ShortURLLength = 0 // Set to default value if there's an error
+		}
+	} else {
+		ShortURLLength = 6 // Default value if not set
+	}
 }
 
 // NewShortenURL creates a new use case instance
@@ -31,7 +51,7 @@ func (u *ShortenURL) Execute(ctx context.Context, longURL string) (string, error
 	}
 
 	// Generate the short URL (this is just a simple example)
-	shortURL := generateShortURL(longURL)
+	shortURL := generateShortURL()
 
 	urlEntity := &entity.ShortURL{
 		ShortURL: shortURL,
@@ -57,7 +77,7 @@ func (u *ShortenURL) GetLongURL(ctx context.Context, shortURL string) (string, e
 }
 
 // generateShortURL generates a random short URL with the length of `shortURLLength`
-func generateShortURL(longURL string) string {
+func generateShortURL() string {
 	result := make([]byte, ShortURLLength)
 	// Assuming result is filled with characters at this point
 	fmt.Printf("Length of result: %d\n", len(result))
