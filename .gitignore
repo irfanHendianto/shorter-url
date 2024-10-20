@@ -17,9 +17,6 @@ vendor/
 /bin
 /pkg
 
-# Air live reload config and tmp files
-.air
-.air.toml
 tmp/
 
 # OS generated files
