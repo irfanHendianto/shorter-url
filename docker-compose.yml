@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development  # Use the "development" stage
+    container_name: go-app-dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app  # Mount the local project directory into the container
+      - ./air.toml:/app/air.toml  # Mount the air configuration file
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "2720:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

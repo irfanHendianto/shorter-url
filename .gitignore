@@ -1,0 +1,36 @@
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Output binaries
+/app/main
+/tmp/
+*.out
+
+# Go vendor directory (if you're using Go modules, this isn't needed)
+vendor/
+
+
+# Dependency directories
+/bin
+/pkg
+
+# Air live reload config and tmp files
+.air
+.air.toml
+tmp/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE and editor specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables (keep your sensitive data private)
+.env
