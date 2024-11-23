@@ -1,0 +1,24 @@
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: url-shortener-config
+#   namespace: url-shortener
+# data:
+#   PORT: "8080"
+#   SHORT_URL_OPTIONS: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+#   SHORT_URL_LENGTH: "3"
+#   MONGO_URL: "mongo-0.mongo.url-shortener.svc.cluster.local:27018,mongo-1.mongo.url-shortener.svc.cluster.local:27018,mongo-2.mongo.url-shortener.svc.cluster.local:27018/?replicaSet=rs0"
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: url-shortener-config
+  namespace: url-shortener
+data:
+  config.json: |
+    {
+      "PORT": "8080",
+      "SHORT_URL_OPTIONS": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+      "SHORT_URL_LENGTH": "3",
+      "MONGO_URL": "my-mongo-cluster-0.my-mongo-cluster-svc.url-shortener.svc.cluster.local:27017,my-mongo-cluster-1.my-mongo-cluster-svc.url-shortener.svc.cluster.local:27017,my-mongo-cluster-2.my-mongo-cluster-svc.url-shortener.svc.cluster.local:27017/?replicaSet=my-mongo-cluster"
+    }

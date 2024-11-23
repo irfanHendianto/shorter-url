@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-shortener-url-local
+  namespace: url-shortener
+spec:
+  rules:
+  - host: shortener-url.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: url-shortener-service
+            port:
+              number: 8080
+  - host: shortener-url.irfan.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: url-shortener-service
+            port:
+              number: 8080
+  - host: irfan.local
+    http:
+      paths:
+      - path: /shortener-url
+        pathType: Prefix
+        backend:
+          service:
+            name: url-shortener-service
+            port:
+              number: 8080
+  ingressClassName: nginx

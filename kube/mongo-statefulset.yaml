@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+  namespace: url-shortener
+spec:
+  serviceName: "mongo"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      initContainers:
+      - name: fix-permissions
+        image: busybox
+        command:
+        - sh
+        - -c
+        - |
+          cp /etc/secrets/mongodb-keyfile /data/db/mongodb-keyfile &&
+          chmod 600 /data/db/mongodb-keyfile
+        volumeMounts:
+        - name: keyfile
+          mountPath: /etc/secrets
+          readOnly: true
+        - name: mongo-data
+          mountPath: /data/db
+      containers:
+      - name: mongo
+        image: mongo:8.0
+        ports:
+        - containerPort: 27018
+        env:
+        # - name: MONGO_INITDB_ROOT_USERNAME
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: mongo-secret
+        #       key: MONGO_INITDB_ROOT_USERNAME
+        # - name: MONGO_INITDB_ROOT_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: mongo-secret
+        #       key: MONGO_INITDB_ROOT_PASSWORD
+        - name: MONGO_REPLICA_SET_NAME
+          value: "rs0"
+        args:
+        - "--port"
+        - "27018"
+        - "--replSet"
+        - "rs0"
+        - "--keyFile"
+        - "/data/db/mongodb-keyfile"
+        volumeMounts:
+        - name: mongo-data
+          mountPath: /data/db
+        - name: mongo-secret-volume
+          mountPath: /etc/secrets-mongo/
+      volumes:
+      - name: keyfile
+        secret:
+          secretName: mongo-keyfile
+      - name: mongo-secret-volume
+        secret:
+          secretName: mongo-secret
+  volumeClaimTemplates:
+  - metadata:
+      name: mongo-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi

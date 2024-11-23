@@ -1,0 +1,31 @@
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: my-mongo-cluster
+  namespace: url-shortener
+spec:
+  members: 3
+  type: ReplicaSet
+  version: 6.0.4
+  security:
+    authentication:
+      modes: ["SCRAM"]  # Only enable SCRAM
+  users:
+    - name: admin
+      db: admin
+      passwordSecretRef:
+        name: mongo-secret
+      scramCredentialsSecretName: my-mongo-scram-credentials
+      roles:
+        - name: root
+          db: admin
+  statefulSet:
+    spec:
+      volumeClaimTemplates:
+        - metadata:
+            name: data-volume
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 8Gi

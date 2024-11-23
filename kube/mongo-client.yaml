@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongo-client
+  namespace: url-shortener
+spec:
+  containers:
+    - name: mongo-client
+      image: mongo:5.0  # This image includes the mongo shell
+      command: ["sleep", "3600"]  # Keeps the pod running for manual work
+      resources:
+        requests:
+          memory: "64Mi"  # Minimum memory required
+          cpu: "100m"     # Minimum CPU required
+        limits:
+          memory: "128Mi" # Maximum memory the container can use
+          cpu: "200m"     # Maximum CPU the container can use

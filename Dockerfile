@@ -2,7 +2,7 @@
 FROM golang:1.23-alpine AS development
 
 # Install air for live reloading
-RUN  go install github.com/air-verse/air@latest
+RUN go install github.com/air-verse/air@latest
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -43,11 +43,23 @@ FROM alpine:latest
 # Set working directory in the final image
 WORKDIR /app
 
+# Install jq for JSON parsing
+RUN apk add --no-cache jq
+
 # Copy the binary from the builder stage
 COPY --from=builder /app/main .
+
+# Copy the entrypoint script
+COPY entrypoint.sh /app/entrypoint.sh
+
+# Ensure the entrypoint script is executable
+RUN chmod +x /app/entrypoint.sh
 
 # Expose the port your app will run on
 EXPOSE 8080
 
-# Command to run the app in production
+# Set the entrypoint to your script
+ENTRYPOINT ["/app/entrypoint.sh"]
+
+# Run the main application
 CMD ["./main"]

@@ -1,0 +1,84 @@
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: mongo-0-external
+#   namespace: url-shortener
+# spec:
+#   type: NodePort
+#   ports:
+#     - port: 27018
+#       targetPort: 27018
+#       nodePort: 32025
+#   selector:
+#     statefulset.kubernetes.io/pod-name: mongo-0
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: mongo-1-external
+#   namespace: url-shortener
+# spec:
+#   type: NodePort
+#   ports:
+#     - port: 27018
+#       targetPort: 27018
+#       nodePort: 32026
+#   selector:
+#     statefulset.kubernetes.io/pod-name: mongo-1
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: mongo-2-external
+#   namespace: url-shortener
+# spec:
+#   type: NodePort
+#   ports:
+#     - port: 27018
+#       targetPort: 27018
+#       nodePort: 32027
+#   selector:
+#     statefulset.kubernetes.io/pod-name: mongo-2
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-mongo-cluster-0-external
+  namespace: url-shortener
+spec:
+  type: NodePort
+  ports:
+    - port: 27017
+      targetPort: 27017
+      nodePort: 32025
+  selector:
+    statefulset.kubernetes.io/pod-name: my-mongo-cluster-0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-mongo-cluster-1-external
+  namespace: url-shortener
+spec:
+  type: NodePort
+  ports:
+    - port: 27017
+      targetPort: 27017
+      nodePort: 32026
+  selector:
+    statefulset.kubernetes.io/pod-name: my-mongo-cluster-1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-mongo-cluster-2-external
+  namespace: url-shortener
+spec:
+  type: NodePort
+  ports:
+    - port: 27017
+      targetPort: 27017
+      nodePort: 32027
+  selector:
+    statefulset.kubernetes.io/pod-name: my-mongo-cluster-2

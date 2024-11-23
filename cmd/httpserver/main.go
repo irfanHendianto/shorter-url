@@ -15,10 +15,13 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file")
+	if _, err := os.Stat(".env"); err == nil {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatalf("Error loading .env file")
+		}
 	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080" // Default port if PORT is not set
@@ -48,6 +51,14 @@ func main() {
 	// Define the route for shortening URLs
 	http.HandleFunc("/shorten", urlHandler.ShortenURLHandler)
 	http.HandleFunc("/", urlHandler.RedirectURLHandler)
+
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		podName := os.Getenv("POD_NAME")
+		if podName == "" {
+			podName = "unknown-pod"
+		}
+		fmt.Fprintf(w, "Served by Pod: %s", podName)
+	})
 
 	// Start the HTTP server
 	fmt.Println("Server is running on http://localhost:" + port)

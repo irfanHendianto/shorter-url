@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo  # Must match the StatefulSet's serviceName
+  namespace: url-shortener
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  clusterIP: None  # Headless service for direct communication
+  selector:
+    app: mongo

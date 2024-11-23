@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: url-shortener-deployment
+  namespace: url-shortener
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: url-shortener-app  # Ensure this matches the template label and Service selector
+  template:
+    metadata:
+      labels:
+        app: url-shortener-app  # Match label with Deployment selector and Service selector
+    spec:
+      containers:
+        - name: url-shortener-container
+          image: url-shortener:prod
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config/config.json
+              subPath: config.json
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: admin
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: password
+            # - name: MONGO_URL
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: url-shortener-config
+            #       key: MONGO_URL
+            # - name: DATABASE_URL
+            #   value: "mongodb://$(MONGO_INITDB_ROOT_USERNAME):$(MONGO_INITDB_ROOT_PASSWORD)@$(MONGO_URL)"
+            # - name: PORT
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: url-shortener-config
+            #       key: PORT
+            # - name: SHORT_URL_OPTIONS
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: url-shortener-config
+            #       key: SHORT_URL_OPTIONS
+            # - name: SHORT_URL_LENGTH
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: url-shortener-config
+            #       key: SHORT_URL_LENGTH
+            - name: POD_NAME  # Inject the Pod name for identification
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+      volumes:
+        - name: config-volume
+          configMap:
+            name: url-shortener-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: url-shortener-service
+  namespace: url-shortener
+spec:
+  selector:
+    app: url-shortener-app  # Match this with the Deployment's label
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 32019
+  type: NodePort
